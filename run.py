@@ -7,14 +7,20 @@ import shutil
 import sys
 import os
 
-compiler_exe = next(c for c in ['cc', 'gcc', 'clang'] if shutil.which(c) is not None)
-print(f'compiler_exe = {compiler_exe}')
+c_compiler_exe = next(c for c in ['cc', 'gcc', 'clang'] if shutil.which(c) is not None)
+print(f'c_compiler_exe = {c_compiler_exe}')
+cpp_compiler_exe = next(c for c in ['cxx', 'g++', 'clang++'] if shutil.which(c) is not None)
+print(f'cpp_compiler_exe = {cpp_compiler_exe}')
 
 print('Compiling pin-experiment-01')
 subprocess.run([
-    compiler_exe,
+    cpp_compiler_exe,
         '-o', 'pin_experiment_01.so',
         '-shared',
+        '-I/opt/pin/source/include/pin', # Will differ based on Pin install details, must contain pin.h
+        '-I/opt/pin/extras/xed-intel64/include/xed',
+        '-I/opt/pin/extras/crt/include',
+        '-L/opt/pin/intel64/lib',
         '-lpin', '-lpintool',
         'pin-experiment-01.cpp',
 ], check=True)
