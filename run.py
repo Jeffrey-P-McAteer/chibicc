@@ -18,8 +18,11 @@ subprocess.run([
         '-o', 'pin_experiment_01.so',
         '-shared',
         '-I/opt/pin/source/include/pin', # Will differ based on Pin install details, must contain pin.h
+        '-I/opt/pin/source/include/pin/gen',
         '-I/opt/pin/extras/xed-intel64/include/xed',
         '-I/opt/pin/extras/crt/include',
+        '-I/opt/pin/extras/crt/include/kernel/uapi',
+        '-I/opt/pin/extras/components/include',
         '-L/opt/pin/intel64/lib',
         '-lpin', '-lpintool',
         'pin-experiment-01.cpp',
