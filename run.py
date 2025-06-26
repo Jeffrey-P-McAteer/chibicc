@@ -12,6 +12,9 @@ print(f'c_compiler_exe = {c_compiler_exe}')
 cpp_compiler_exe = next(c for c in ['cxx', 'g++', 'clang++'] if shutil.which(c) is not None)
 print(f'cpp_compiler_exe = {cpp_compiler_exe}')
 
+# TODO looks like https://www.mustakim.info/my-blogs/how-i-learned/intel_pin 
+# has some good reference material, incl. using the tools directory and just running the collage of
+# make instructions to build the intel tool. Pin appears to have cmake's level of API friendlieness
 print('Compiling pin-experiment-01')
 subprocess.run([
     cpp_compiler_exe,
