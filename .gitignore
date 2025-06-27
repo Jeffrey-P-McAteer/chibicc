@@ -10,5 +10,6 @@
 /stage2
 *.so
 **/*.so
+/build
 
 

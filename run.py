@@ -6,11 +6,44 @@ import tempfile
 import shutil
 import sys
 import os
+import tarfile
+import io
+import urllib.request
+
+def find_ent_under(directory, check_fn):
+    for dirent in os.listdir(directory):
+        dirent_path = os.path.join(directory, dirent)
+        if check_fn(dirent, dirent_path):
+            return dirent_path
+        if os.path.isdir(dirent_path):
+            possible_match = find_ent_under(dirent_path, check_fn)
+            if not (possible_match is None):
+                return possible_match
+    return None
 
 c_compiler_exe = next(c for c in ['cc', 'gcc', 'clang'] if shutil.which(c) is not None)
 print(f'c_compiler_exe = {c_compiler_exe}')
 cpp_compiler_exe = next(c for c in ['cxx', 'g++', 'clang++'] if shutil.which(c) is not None)
 print(f'cpp_compiler_exe = {cpp_compiler_exe}')
+
+build_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'build'))
+os.makedirs(build_dir, exist_ok=True)
+
+intel_pin_source_url = 'https://software.intel.com/sites/landingpage/pintool/downloads/pin-external-3.31-98869-gfa6f126a8-gcc-linux.tar.gz'
+intel_pin_canary = find_ent_under(build_dir, lambda dirent, full_path: dirent == 'README')
+if intel_pin_canary is None or not os.path.exists(intel_pin_canary):
+    print(f'{intel_pin_canary} does not exist, downloading Intel Pin from {intel_pin_source_url}')
+    with urllib.request.urlopen(intel_pin_source_url) as resp:
+        tar_bytes = resp.read()
+        ds = io.BytesIO(tar_bytes)
+        with tarfile.open(fileobj=ds, mode='r:gz') as t:
+            t.extractall(build_dir)
+    print(f'Done, please re-start')
+    sys.exit(1)
+intel_pin_dir = os.path.dirname(intel_pin_canary)
+print(f'intel_pin_dir = {intel_pin_dir}')
+
+sys.exit(1)
 
 # TODO looks like https://www.mustakim.info/my-blogs/how-i-learned/intel_pin 
 # has some good reference material, incl. using the tools directory and just running the collage of
